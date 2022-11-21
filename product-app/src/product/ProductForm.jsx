@@ -22,12 +22,15 @@ export default function ProductForm(props) {
     const handleSubmit = (event) => {
         //empecher l'action par défaut de navigateur
         event.preventDefault();
+
         //faire la validation
         //ajouter le produit
         const product = {
             id: id,
             name: name
         }
+        //requete AJAX vers le backend
+
         // const product = {
         //     id,
         //     name
