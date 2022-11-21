@@ -19,10 +19,26 @@ export default function ProductForm(props) {
                 break;
         }
     }
+    const handleSubmit = (event) => {
+        //empecher l'action par défaut de navigateur
+        event.preventDefault();
+        //faire la validation
+        //ajouter le produit
+        const product = {
+            id: id,
+            name: name
+        }
+        // const product = {
+        //     id,
+        //     name
+        // }
+        props.addProduct(product)
+        // props.addProduct({id, name})
+    }
     return (
         <>
             <h1>Formulaire d'ajout de produit</h1>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <label htmlFor="id">Id</label>
                 <input
                     type="number"
@@ -40,6 +56,7 @@ export default function ProductForm(props) {
                     onChange={handleChange}
                 />
                 <input type="submit" value="Ajouter Produit" />
+                {/* <input type="submit" value="Ajouter Produit" onClick={handleSubmit}/> */}
             </form>
         </>
 

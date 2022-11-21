@@ -37,13 +37,19 @@ export default function ProductDisplay(props) {
 
     const handleShowFormBtn = function () {
         setShowForm(function (oldShowForm) {
-            setShowForm(!oldShowForm)
+            return !oldShowForm
         })
         // setShowForm((oldShowForm) => setShowForm(!oldShowForm))
     }
     const deleteProduct = (id) => {
         // setProducts(products.filter((prod) => prod.id !== id))
-        setProducts((oldProducts) => setProducts(oldProducts.filter((prod) => prod.id !== id)))
+        setProducts((oldProducts) => oldProducts.filter((prod) => prod.id !== id))
+    }
+    const addProduct = (product) => {
+        // setProducts((oldProducts) => oldProducts.push(product)); //faut pas l'utiliser
+        setProducts((oldProducts) => oldProducts.concat(product))
+        // setProducts((oldProducts) => [...oldProducts, product])
+        setShowForm(false)//afficher la liste des produits
     }
     if (status === "error") {
         return <p>Echec de récupération de données : {error}</p>
@@ -53,13 +59,15 @@ export default function ProductDisplay(props) {
     }
     else if (status === "success") {
         return (
-            <div>
+            <div className="container">
                 <h1>Gestion de produits</h1>
-                <button onClick={handleShowFormBtn}>
+                <button onClick={handleShowFormBtn} className="btn btn-primary">
                     {showForm ? "Afficher la liste" : "Ajouter un produit"}
                 </button>
                 {showForm ?
-                    <ProductForm />
+                    <ProductForm
+                        addProduct={addProduct}
+                    />
                     :
                     <ProductTable
                         products={products}

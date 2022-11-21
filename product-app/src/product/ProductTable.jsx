@@ -2,12 +2,11 @@ import React from "react";
 import ProductListItem from "./ProductListItem";
 
 export default function ProductTable(props) {
-    console.log(props.products);
     return (
         // fragment
         <>
             <h2>Liste des produits</h2>
-            <table>
+            <table className="table table-striped">
                 <thead>
                     <tr>
                         <th>ID</th>
