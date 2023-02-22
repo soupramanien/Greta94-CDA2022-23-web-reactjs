@@ -8,6 +8,9 @@ export default function ProductForm(props) {
     //prix doit être strictement superieur à 0
     const [name, setName] = useState("");
     const [price, setPrice] = useState("");
+    //A FAIRE : créer des variables d'état pour stocker les messages d'erreur
+    const [nameMessage, setNameMessage] = useState("")
+    const [priceMessage, setPriceMessage] = useState("")
 
     const handleChange = (event) => {
         const value = event.target.value
@@ -22,11 +25,40 @@ export default function ProductForm(props) {
             //prix doit être strictement superieur à 0
             case "name":
                 console.log("name");
-                setName(value)
+                //A FAIRE
+                // appeler setName ssi value ne contient pas de caracteres spéciaux
+                // indice : utiliser RegExp
+                if (/^[^$@&%]*$/.test(value)) {
+                    setName(value)
+                }
+                else {
+                    setNameMessage("le caractere n'est pas valide")
+                }
+                if (value.length < 2) {
+                    setNameMessage((msg) => msg + " il manque " + (2 - value.length) + " caractere(s)")
+                } else {
+                    setNameMessage("")
+                }
                 break;
             case "price":
                 console.log("price");
-                setPrice(value)
+                //A FAIRE
+                // appeler setPrice ssi value est vide ou 0 ou un nombre supérieur à 0
+                if (value === "") {
+                    setPrice(value)
+                }
+                if (value === "0") {
+                    setPrice(value)
+                }
+                let newVal = parseFloat(value)
+                if (!isNaN(newVal) && newVal > 0) {
+                    setPrice(newVal)
+                    setPriceMessage("");
+                }
+                else {
+                    setPriceMessage("prix n'est pas valide")
+                }
+
                 break;
             default:
                 break;
@@ -37,6 +69,13 @@ export default function ProductForm(props) {
         event.preventDefault();
 
         //faire la validation
+        //A FAIRE
+        //name : vérifier si il y a au moins deux caracteres
+        if (!/^[^$@&%]{2,}$/.test(name) || price <= 0) {
+            alert("nom et/ou prix n'est pas valide !");
+            return;
+        };
+        //prix : vérifier si le prix est supérieur à 0
         //ajouter le produit
         const product = {
             // id: id,
@@ -73,6 +112,8 @@ export default function ProductForm(props) {
                         id="name"
                         onChange={handleChange}
                     />
+                    {/* A FAIRE : afficher le message d'erreur si name est invalide */}
+                    {nameMessage.length > 0 && <p>{nameMessage}</p>}
                 </div>
                 <div>
                     <label htmlFor="price">Prix de produit</label>
@@ -84,6 +125,8 @@ export default function ProductForm(props) {
                         step={0.01}
                         onChange={handleChange}
                     />
+                    {/* A FAIRE : afficher le message d'erreur si price est invalide */}
+                    {priceMessage.length > 0 && <p>{priceMessage}</p>}
                 </div>
 
                 <input type="submit" value="Ajouter Produit" />
