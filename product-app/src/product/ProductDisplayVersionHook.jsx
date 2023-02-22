@@ -12,7 +12,7 @@ export default function ProductDisplay(props) {
     // const error = obj.error
     // const products1 = obj.data
     const { data: products, setData: setProducts, error, status } =
-        useFetch("http://localhost:3000/data.json")
+        useFetch("http://localhost:7070/products")
     // const [products, setProducts] = useState([]);
 
     //componentDidMount
@@ -42,14 +42,45 @@ export default function ProductDisplay(props) {
         // setShowForm((oldShowForm) => setShowForm(!oldShowForm))
     }
     const deleteProduct = (id) => {
+        fetch("http://localhost:7070/products/" + id,
+            { method: 'delete' }).then((res) => {
+                if (res.ok) {
+                    return res.json()
+                }
+            }).then((data) => {
+                if (data.ok) {
+                    setProducts((oldProducts) => oldProducts.filter((prod) => prod.id !== id))
+                }
+            })
+
+
+        // fetch(`http://localhost:7070/products/${id}`, {})
         // setProducts(products.filter((prod) => prod.id !== id))
-        setProducts((oldProducts) => oldProducts.filter((prod) => prod.id !== id))
     }
     const addProduct = (product) => {
+        //envoyer une requete
+        //créer une en-tete
+        const headers = new Headers();
+        headers.set("Content-Type", "application/json");
+
+        fetch("http://localhost:7070/products",
+            {
+                method: 'POST',//methode HTTP à utiliser
+                body: JSON.stringify(product),//sérialisation JS -> JSON
+                headers: headers
+            }).then((res) => {
+                console.log(res);
+                if (res.ok) {
+                    return res.json()//desérialisation JSON -> JS
+                }
+            }).then((product) => {
+                setProducts((oldProducts) => [...oldProducts, product])
+                setShowForm(false)//afficher la liste des produits
+            })
         // setProducts((oldProducts) => oldProducts.push(product)); //faut pas l'utiliser
-        setProducts((oldProducts) => oldProducts.concat(product))
+        // setProducts((oldProducts) => oldProducts.concat(product))
         // setProducts((oldProducts) => [...oldProducts, product])
-        setShowForm(false)//afficher la liste des produits
+        // setShowForm(false)//afficher la liste des produits
     }
     if (status === "error") {
         return <p>Echec de récupération de données : {error}</p>
