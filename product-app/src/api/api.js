@@ -14,3 +14,5 @@ export default function getData(url) {
             });
     })
 }
+
+export const API_BASE_URL = "http://localhost:7070/api"

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { API_BASE_URL } from "../api/api";
 import useFetch from "../hooks/useFetch";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
@@ -12,7 +13,7 @@ export default function ProductDisplay(props) {
     // const error = obj.error
     // const products1 = obj.data
     const { data: products, setData: setProducts, error, status } =
-        useFetch("http://localhost:7070/products")
+        useFetch(API_BASE_URL + "/products")
     // const [products, setProducts] = useState([]);
 
     //componentDidMount
@@ -42,28 +43,31 @@ export default function ProductDisplay(props) {
         // setShowForm((oldShowForm) => setShowForm(!oldShowForm))
     }
     const deleteProduct = (id) => {
-        fetch("http://localhost:7070/products/" + id,
-            { method: 'delete' }).then((res) => {
+        const headers = new Headers();
+        console.log(props.user.accessToken);
+        headers.set("Authorization", "Bearer " + props.user.accessToken)
+        fetch(API_BASE_URL + "/admin/products/" + id,
+            { method: 'delete', headers: headers }).then((res) => {
                 if (res.ok) {
                     return res.json()
+                }
+                else if (res.status === 403) {
+                    props.setUser(null)
+                    return
                 }
             }).then((data) => {
                 if (data.ok) {
                     setProducts((oldProducts) => oldProducts.filter((prod) => prod.id !== id))
                 }
             })
-
-
-        // fetch(`http://localhost:7070/products/${id}`, {})
-        // setProducts(products.filter((prod) => prod.id !== id))
     }
     const addProduct = (product) => {
         //envoyer une requete
         //créer une en-tete
         const headers = new Headers();
         headers.set("Content-Type", "application/json");
-
-        fetch("http://localhost:7070/products",
+        headers.set("Authorization", "Bearer " + props.user.accessToken)
+        fetch(API_BASE_URL + "/admin/products",
             {
                 method: 'POST',//methode HTTP à utiliser
                 body: JSON.stringify(product),//sérialisation JS -> JSON
@@ -72,6 +76,10 @@ export default function ProductDisplay(props) {
                 console.log(res);
                 if (res.ok) {
                     return res.json()//desérialisation JSON -> JS
+                }
+                else if (res.status === 403) {
+                    props.setUser(null)
+                    return
                 }
             }).then((product) => {
                 setProducts((oldProducts) => [...oldProducts, product])
